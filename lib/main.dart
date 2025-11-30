@@ -18,16 +18,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (context, themeprovider, child) {
+      builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'Demo Tema Aplikasi',
           theme: ThemeData.light(useMaterial3: true),
           darkTheme: ThemeData.dark(useMaterial3: true),
-          themeMode: themeprovider.themeMode,
+          themeMode: themeProvider.themeMode,
           debugShowCheckedModeBanner: false,
           home: const Homepage(),
         );
-      }
+      },
     );
   }
 }

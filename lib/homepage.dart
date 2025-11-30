@@ -11,19 +11,22 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   late TextEditingController usernameController;
+  bool _isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
-
-    final provider = Provider.of<ThemeProvider>(context, listen: false);
-
-    usernameController = TextEditingController(text: provider.username);
+    usernameController = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
+    if (_isFirstLoad && themeProvider.username.isNotEmpty) {
+      usernameController.text = themeProvider.username;
+      _isFirstLoad = false;
+    }
 
     return Scaffold(
       appBar: AppBar(

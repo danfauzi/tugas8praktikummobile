@@ -2,47 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-
   ThemeMode _themeMode = ThemeMode.light;
-  ThemeMode get themeMode => _themeMode;
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
-
-  static const String _themeKey = 'theme_key';
-
   String _username = "";
-  String get username => _username;
-
-  static const String _usernameKey = "username_key";
 
   ThemeProvider() {
-    _loadTheme();
+    _loadPreferences();
   }
 
-  void _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
+  ThemeMode get themeMode => _themeMode;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  String get username => _username;
 
-    final isDark = prefs.getBool(_themeKey) ?? false;
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool? isDark = prefs.getBool('isDark');
+    if (isDark != null) {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    }
+
+    String? savedUser = prefs.getString('username');
+    if (savedUser != null) {
+      _username = savedUser;
+    }
+
+    notifyListeners();
+  }
+
+  void toggleTheme(bool isDark) async {
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
 
-    _username = prefs.getString(_usernameKey) ?? "";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDark', isDark);
 
     notifyListeners();
   }
 
-  void toggleTheme(bool isOn) async {
-    _themeMode = isOn ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(_themeKey, isOn);
-  }
-
-  // Simpan username
   void setUsername(String value) async {
     _username = value;
-    notifyListeners();
 
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(_usernameKey, value);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("username", value);
+
+    notifyListeners();
   }
 }
